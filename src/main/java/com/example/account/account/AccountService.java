@@ -33,9 +33,13 @@ public class AccountService {
     public Account open(Long customerId) {
         customers.findById(customerId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "customer not found"));
-        Account account = accounts.save(new Account(accounts.nextId(), customerId, BigDecimal.ZERO, AccountStatus.ACTIVE, Instant.now()));
+        Account account = accounts.save(new Account(accounts.nextId(), customerId, BigDecimal.ZERO, AccountStatus.PENDING_KYC, Instant.now()));
         publisher.accountOpened(account);
         return account;
+    }
+
+    public void activate(Long accountId) {
+        accounts.findById(accountId).ifPresent(account -> accounts.save(account.activate()));
     }
 
     public void credit(Long accountId, BigDecimal amount, String reference) {
@@ -43,6 +47,13 @@ public class AccountService {
             return;
         }
         accounts.findById(accountId).ifPresent(account -> accounts.save(account.credit(amount)));
+    }
+
+    public void debit(Long accountId, BigDecimal amount, String reference) {
+        if (!processedCredits.add(reference)) {
+            return;
+        }
+        accounts.findById(accountId).ifPresent(account -> accounts.save(account.debit(amount)));
     }
 
     public Optional<AccountSummary> summary(Long accountId) {

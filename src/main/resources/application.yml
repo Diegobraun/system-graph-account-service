@@ -19,7 +19,12 @@ spring:
 app:
   topics:
     loan-disbursed: loan-disbursed
+    customer-kyc-approved: customer-kyc-approved
+    payment-completed: payment-completed
+    investment-applied: investment-applied
 
 services:
   loan-service:
     url: http://localhost:8082
+  customer-service:
+    url: http://localhost:8083
