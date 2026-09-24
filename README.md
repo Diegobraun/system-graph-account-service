@@ -3,6 +3,10 @@
 Serviço de clientes e contas. Usa **spring-kafka** direto (`KafkaTemplate` e `@KafkaListener`), expõe REST e
 **GraphQL** (Spring for GraphQL) e chama o loan-service e o customer-service com **OpenFeign**.
 
+![account-service na interface do system-graph](docs/system-graph.jpg)
+
+*O account-service na [interface visual](https://github.com/Diegobraun/system-graph-poc#interface-visual) da plataforma: tudo que ele chama, expõe, publica e consome.*
+
 ## Contratos
 
 | Tipo | Contrato | Detalhe |
