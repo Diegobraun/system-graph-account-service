@@ -35,9 +35,32 @@ O tópico publicado vem de uma constante (`Topics.ACCOUNT_OPENED`) e o consumido
 mvn spring-boot:run
 ```
 
-Porta 8081. Precisa do Kafka em `localhost:9092` (`docker compose up -d` na raiz).
+Porta 8081. Precisa do Kafka em `localhost:9092` e do loan-service em `localhost:8082` para o `/summary`.
+O Kafka sobe com o `docker-compose.yml` da [plataforma](https://github.com/Diegobraun/system-graph-poc).
 
 ## Integração com IA
 
 `.mcp.json` aponta para o MCP server do grafo e o `CLAUDE.md` orienta o assistente a consultar
 `impact_of_change` antes de mexer em contratos.
+
+## Parte da POC system-graph
+
+Este repositório é um dos serviços da POC [system-graph](https://github.com/Diegobraun/system-graph-poc), que dá a assistentes de IA uma visão
+dos contratos entre serviços que vivem em repositórios diferentes.
+
+| Repositório | Papel |
+|---|---|
+| [system-graph-poc](https://github.com/Diegobraun/system-graph-poc) | Plataforma: extrator, MCP server, templates de CI, docker-compose e docs |
+| [system-graph-account-service](https://github.com/Diegobraun/system-graph-account-service) | Clientes e contas |
+| [system-graph-loan-service](https://github.com/Diegobraun/system-graph-loan-service) | Empréstimos |
+
+### O que este repositório tem para o grafo
+
+- **`.github/workflows/system-graph.yml`**: a cada push na `main`, compila, baixa o `graph-extractor.jar` da
+  release da plataforma, extrai o `service-graph.json` e publica como artefato do workflow. Se os secrets
+  `NEO4J_URI`, `NEO4J_USER` e `NEO4J_PASSWORD` existirem, também grava no Neo4j.
+- **`.gitlab-ci.yml`**: o mesmo job no formato GitLab, incluindo o template da plataforma. É o que um serviço da
+  empresa teria.
+- **`.mcp.json`** e **`CLAUDE.md`**: conectam o assistente ao MCP server e dizem quando consultar o grafo.
+
+O extrator só enxerga este repositório. O cruzamento com os outros serviços acontece no grafo central.
